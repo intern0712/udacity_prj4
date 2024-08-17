@@ -76,7 +76,7 @@ jobs:
       
       - name: Build, tag and push docker image to AWS ECR
         run: |
-          aws eks update-kubeconfig --name my-cluster
+          aws eks update-kubeconfig --name cluster
           kubectl get svc
           export EXTERNALIP=$(kubectl get svc backend -o=jsonpath='{.status.loadBalancer.ingress[0].hostname}{"\n"}{.status.loadBalancer.ingress[0].ip}')
           echo $EXTERNALIP
@@ -88,7 +88,7 @@ jobs:
 
       - name: Update kubeconfig, deploy to EKS
         run: |
-          aws eks update-kubeconfig --name my-cluster --region us-east-1
+          aws eks update-kubeconfig --name cluster --region us-east-1
           cd k8s
           kustomize edit set image frontend=${{vars.AWS_ACCOUNT_ID}}.dkr.ecr.us-east-1.amazonaws.com/${{env.IMAGE_REPO_NAME}}:${{env.IMAGE_TAG}}
           kustomize build | kubectl apply -f -
